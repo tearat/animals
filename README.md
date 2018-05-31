@@ -1,2 +1,8 @@
 # animals
-`brain.js` neuro calculated change to survive lol
+
+`brain.js` neuro calculated chance of animals to survive lol
+
+## To start:
+
+> `npm i brain.js`
+> `npm animals.js`
