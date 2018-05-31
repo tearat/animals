@@ -4,5 +4,7 @@
 
 ## To start:
 
-> `npm i brain.js`
-> `npm animals.js`
+```
+> npm i brain.js`
+> npm animals.js`
+````
