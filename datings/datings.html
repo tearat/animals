@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>People neuro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/brain/0.6.3/brain.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+<!--        {{ results }}-->
+        
+        <hr>
+        
+        <button @click="process()">Result</button>
+        
+        <table>
+            <thead>
+                <td>Name</td>
+                <td>Body</td>
+                <td>Alco</td>
+                <td>Brain</td>
+                <td>Cash</td>
+                <td>Legs</td>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Ты!</td>
+                    <td><input type="number" step="0.1" min=0 max=1 v-model="you.body"></td>
+                    <td><input type="number" step="0.1" min=0 max=1 v-model="you.alco"></td>
+                    <td><input type="number" step="0.1" min=0 max=1 v-model="you.brain"></td>
+                    <td><input type="number" step="0.1" min=0 max=1 v-model="you.cash"></td>
+                    <td><input type="number" step="0.1" min=0 max=1 v-model="you.legs"></td>
+                </tr>
+                <tr v-for="people in peoples">
+                    <td>{{ people.name }}</td>
+                    <td><input type="number" step="0.1" min=0 max=1 v-model="people.body"></td>
+                    <td><input type="number" step="0.1" min=0 max=1 v-model="people.alco"></td>
+                    <td><input type="number" step="0.1" min=0 max=1 v-model="people.brain"></td>
+                    <td><input type="number" step="0.1" min=0 max=1 v-model="people.cash"></td>
+                    <td><input type="number" step="0.1" min=0 max=1 v-model="people.legs"></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <hr>
+        
+        <div v-for="result in results">
+            <p><strong>{{ result.name }}</strong>: neuro: {{ result.match_neuro }} : ariphmetic: {{ result.match }}</p>
+            <hr>
+<!--
+            <p>body: {{ result.match_body }}</p>
+            <p>alco: {{ result.match_alco }}</p>
+            <p>brain: {{ result.match_brain }}</p>
+            <p>cash: {{ result.match_cash }}</p>
+            <p>legs: {{ result.match_legs }}</p>
+-->
+        </div>
+<!--        {{ trainer }}-->
+    </div>
+</body>
+</html>
+
+
+<script>
+
+    var net = new brain.NeuralNetwork();
+    
+    //////////
+    
+    var app = new Vue({
+        el: "#app",
+        data: {
+            you: {
+                body: 1, alco: 0, brain: 0.8, cash: 0.5, legs: 0.8
+            },
+            peoples: [
+//                {name: "Тест", body: 1, alco: 1, brain: 0, cash: 1, legs: 0.5},
+            ],
+            trainer: [],
+            results: []
+        },
+        computed: {
+            results: function() {
+                var results = [];
+                
+                for (i=0; i<this.peoples.length; i++) {
+                    var current = this.peoples[i];
+                    net.train(this.trainer);
+                    var match = net.run({body: current.body, alco: current.alco})[0];
+                    
+                    console.log( match );
+                    
+                    results.push({
+                        name: current.name,
+                        match: match
+                    });
+                }
+                return results;
+            },
+        },
+        methods: {
+            generate_trainer: function() {
+                this.trainer = [];
+                
+//                this.trainer.push( {input: {body: -0.1}, output: [0]} );
+//                this.trainer.push( {input: {body: 1.1}, output: [0]} );
+//                this.trainer.push( {input: {alco: -0.1}, output: [0]} );
+//                this.trainer.push( {input: {alco: 1.1}, output: [0]} );
+//                this.trainer.push( {input: {brain: -0.1}, output: [0]} );
+//                this.trainer.push( {input: {brain: 1.1}, output: [0]} );
+//                this.trainer.push( {input: {cash: -0.1}, output: [0]} );
+//                this.trainer.push( {input: {cash: 1.1}, output: [0]} );
+//                this.trainer.push( {input: {legs: -0.1}, output: [0]} );
+//                this.trainer.push( {input: {legs: 1.1}, output: [0]} );
+                
+                this.trainer.push( {input: {body:  this.you.body},  output: [1]} );
+                this.trainer.push( {input: {alco:  this.you.alco},  output: [1]} );
+                this.trainer.push( {input: {brain: this.you.brain}, output: [1]} );
+                this.trainer.push( {input: {cash:  this.you.cash},  output: [1]} );
+                this.trainer.push( {input: {legs:  this.you.legs},  output: [1]} );
+                
+                this.trainer.push( {input: {body:  parseFloat(this.you.body)+1.0},  output: [0]} );
+                this.trainer.push( {input: {body:  parseFloat(this.you.body-1.0)},  output: [0]} );
+                this.trainer.push( {input: {alco:  parseFloat(this.you.alco)+1.0},  output: [0]} );
+                this.trainer.push( {input: {alco:  parseFloat(this.you.alco-1.0)},  output: [0]} );
+                this.trainer.push( {input: {brain: parseFloat(this.you.brain)+1.0}, output: [0]} );
+                this.trainer.push( {input: {brain: parseFloat(this.you.brain-1.0)}, output: [0]} );
+                this.trainer.push( {input: {cash:  parseFloat(this.you.cash)+1.0},  output: [0]} );
+                this.trainer.push( {input: {cash:  parseFloat(this.you.cash-1.0)},  output: [0]} );
+                this.trainer.push( {input: {legs:  parseFloat(this.you.legs)+1.0},  output: [0]} );
+                this.trainer.push( {input: {legs:  parseFloat(this.you.legs-1.0)},  output: [0]} );
+                
+//                console.log(this.trainer);
+            },
+            calculate: function() {
+                this.results = [];
+                
+                for (i=0; i<this.peoples.length; i++) {
+                    var current = this.peoples[i];
+                    net.train(this.trainer);
+//                    var match = net.run({
+//                        body: current.body, 
+//                        alco: current.alco,
+//                        brain: current.brain,
+//                        cash: current.cash,
+//                        legs: current.legs,
+//                    })[0];
+                    
+                    var match_body = net.run({ body: current.body })[0];
+                    var match_alco = net.run({ alco: current.alco })[0];
+                    var match_brain = net.run({ brain: current.brain })[0];
+                    var match_cash = net.run({ cash: current.cash })[0];
+                    var match_legs = net.run({ legs: current.legs })[0];
+                    
+//                    console.log( match );
+                    
+                    this.results.push({
+                        name: current.name,
+//                        match_neuro: match,
+                        match: (match_body+match_alco+match_brain+match_cash+match_legs)/5,
+                        match_body: match_body,
+                        match_alco: match_alco,
+                        match_brain: match_brain,
+                        match_cash: match_cash,
+                        match_legs: match_legs,
+                    });
+                }
+            },
+            process: function() {
+                this.generate_trainer();
+                this.calculate();
+            }
+        }
+    });
+
+</script>
